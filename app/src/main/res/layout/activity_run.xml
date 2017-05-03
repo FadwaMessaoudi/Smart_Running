@@ -11,12 +11,20 @@
     tools:context="eu.kudan.ar.RunActivity">
 
     <TextView
-        android:text="TextView"
+        android:text="New challenge chosen..."
+        android:id="@+id/viewMarkerInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="26dp"
-        android:id="@+id/test" />
+        android:layout_marginTop="26dp" />
+
+    <Button
+        android:id="@+id/totestmap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:text="Let's get start!" />
 </RelativeLayout>
