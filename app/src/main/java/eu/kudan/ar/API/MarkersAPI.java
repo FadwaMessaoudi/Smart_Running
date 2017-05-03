@@ -22,7 +22,7 @@ public class MarkersAPI extends AsyncTask<String, Void, String> {
         String token = params[0];
         String id = params[1];
         try {
-            URL url = new URL("https://smart.domwillia.ms/markers/");
+            URL url = new URL("https://smart.domwillia.ms/markers/"+id);
             HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
 
             //add request header
@@ -30,7 +30,6 @@ public class MarkersAPI extends AsyncTask<String, Void, String> {
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Accept", "application/json");
             connection.setRequestProperty("token", token);
-            connection.setRequestProperty("id", id);
 
             if (connection.getResponseCode() != HttpsURLConnection.HTTP_OK) {
                 if(connection.getResponseCode() == HttpURLConnection.HTTP_BAD_REQUEST){

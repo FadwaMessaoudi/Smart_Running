@@ -1,6 +1,7 @@
 package eu.kudan.ar.model;
 
-import java.lang.reflect.Array;
+import android.graphics.Bitmap;
+
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -21,8 +22,9 @@ public class Route {
     private Mode mode;
     private Date published, lastUpdated;
     private ArrayList<Marker> markers;
+    private Bitmap thumbnail;
 
-    public Route(String id, String title, String description, int difficulty, double rating, Mode mode, Date published, Date lastUpdated, ArrayList<Marker> markers) {
+    public Route(String id, String title, String description, int difficulty, double rating, Mode mode, Date published, Date lastUpdated, ArrayList<Marker> markers, Bitmap thumbnail) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -32,10 +34,15 @@ public class Route {
         this.published = published;
         this.lastUpdated = lastUpdated;
         this.markers=markers;
+        this.thumbnail = thumbnail;
     }
 
     public String getId() {
         return id;
+    }
+
+    public Bitmap getThumbnail() {
+        return thumbnail;
     }
 
     public String getTitle() {

@@ -1,32 +1,26 @@
 package eu.kudan.ar;
 
-import android.os.AsyncTask;
-
-import eu.kudan.ar.API.MarkersAPI;
-import eu.kudan.ar.API.RoutesAPI;
-import eu.kudan.ar.API.SignInAPI;
-import eu.kudan.ar.model.Marker;
-import eu.kudan.ar.model.Route;
+import android.graphics.Bitmap;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
-import javax.net.ssl.HttpsURLConnection;
+import eu.kudan.ar.API.CompletedRoutesAPI;
+import eu.kudan.ar.API.DownloadImageTask;
+import eu.kudan.ar.API.MarkersAPI;
+import eu.kudan.ar.API.RoutesAPI;
+import eu.kudan.ar.API.SignInAPI;
+import eu.kudan.ar.model.CompletedRoute;
+import eu.kudan.ar.model.Marker;
+import eu.kudan.ar.model.Route;
 
 
 /**
@@ -39,6 +33,7 @@ public class RestAPI {
      * authentication token
      */
     private String token;
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     private String name, email, pwd;
 
@@ -57,6 +52,7 @@ public class RestAPI {
 
     /**
      * get the singleton
+     *
      * @return the singleton
      */
     public static RestAPI getINSTANCE() {
@@ -65,16 +61,17 @@ public class RestAPI {
 
     /**
      * connect to the server and get the authentication token
-     * @param pName username of the user ( not required if email is given)
-     * @param pPwd password (required)
+     *
+     * @param pName  username of the user ( not required if email is given)
+     * @param pPwd   password (required)
      * @param pEmail email of the user (not required if username is given)
      * @return 0 if everything ran smoothly. >0 otherwise.
      */
-    public String connect(String pName, String pPwd, String pEmail ){
+    public String connect(String pName, String pPwd, String pEmail) {
 
         SignInAPI signin = new SignInAPI();
         try {
-            signin.execute(pName, pEmail,pPwd);
+            signin.execute(pName, pEmail, pPwd);
             token = signin.get();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -83,9 +80,9 @@ public class RestAPI {
             e.printStackTrace();
             return "error";
         }
-        if(!token.equals("error") && !token.equals("bad auth")){
+        if (!token.equals("error") && !token.equals("bad auth")) {
             name = pName;
-            email=pEmail;
+            email = pEmail;
             pwd = pPwd;
         }
         return token;
@@ -93,6 +90,7 @@ public class RestAPI {
 
     /**
      * make a get request to the server
+     *
      * @return the list of all routes available
      */
     public ArrayList<Route> getRoutesList() {
@@ -103,7 +101,7 @@ public class RestAPI {
         routesApi.execute(token);
         try {
             String output = routesApi.get();
-            if(output.equals("error") || output.equals("auth error")){
+            if (output.equals("error") || output.equals("auth error")) {
                 return list;
             }
             JSONArray response = new JSONArray(output);
@@ -117,12 +115,10 @@ public class RestAPI {
 
                 for (int m = 0; m < listMarkers.length(); m++) {
                     Marker newMarker = new Marker(listMarkers.getString(m));
-                    newMarker = getMarker(newMarker);
                     markers.add(newMarker);
 
                 }
 
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 Date published = dateFormat.parse(item.getString("date_published"));
                 Date lastUpdated = dateFormat.parse(item.getString("last_updated"));
                 Route.Mode routeMode;
@@ -139,7 +135,12 @@ public class RestAPI {
 
                 }
 
-                Route route = new Route(item.getString("id"), item.getString("title"), item.getString("description"), item.getInt("difficulty"), item.getDouble("rating"), routeMode, published, lastUpdated, markers);
+                DownloadImageTask imageDownload = new DownloadImageTask();
+                imageDownload.execute(item.getString("thumbnail"));
+
+                Bitmap thumbnail = imageDownload.get();
+
+                Route route = new Route(item.getString("id"), item.getString("title"), item.getString("description"), item.getInt("difficulty"), item.getDouble("rating"), routeMode, published, lastUpdated, markers, thumbnail);
 
                 list.add(route);
             }
@@ -156,30 +157,72 @@ public class RestAPI {
     }
 
 
-   public Marker getMarker(Marker marker){
+    public Marker getMarker(Marker marker) {
 
 
-       MarkersAPI markersApi = new MarkersAPI();
-       markersApi.execute(token, marker.getId());
-       try {
-           String output = markersApi.get();
-           if(output.equals("error") || output.equals("auth error")){
-               return null;
-           }
-           JSONObject item = new JSONObject(output);
+        MarkersAPI markersApi = new MarkersAPI();
+        markersApi.execute(token, marker.getId());
+        try {
+            String output = markersApi.get();
+            if (output.equals("error") || output.equals("auth error")) {
+                return null;
+            }
+            JSONObject item = new JSONObject(output);
 
-           marker.initiate(item.getString("title"), item.getString("description"), item.getString("full_description"), item.getString("latitude"), item.getString("longitude"),item.getString("zone_radius"));
+            DownloadImageTask imageDownload = new DownloadImageTask();
+            imageDownload.execute(item.getString("target_image"));
+            Bitmap targetImage = imageDownload.get();
 
-       } catch (InterruptedException e) {
-           e.printStackTrace();
-       } catch (ExecutionException e) {
-           e.printStackTrace();
-       } catch (JSONException e) {
-           e.printStackTrace();
-       }
-       return marker;
-   }
+            imageDownload.execute(item.getString("target_texture"));
+            Bitmap targetTexture = imageDownload.get();
 
+            marker.initiate(item.getString("title"), item.getString("description"), item.getString("full_description"), item.getString("latitude"), item.getString("longitude"),item.getString("zone_radius"), item.getString("clue"), targetImage , targetTexture);
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return marker;
+    }
+
+    public ArrayList<CompletedRoute> getCompletedRoutes() {
+        ArrayList<CompletedRoute> list = new ArrayList<CompletedRoute>();
+
+        CompletedRoutesAPI completedRoutesApi = new CompletedRoutesAPI();
+        completedRoutesApi.execute(token);
+        try {
+            String output = completedRoutesApi.get();
+            if (output.equals("error") || output.equals("auth error")) {
+                return list;
+            }
+            JSONArray response = new JSONArray(output);
+
+            for (int i = 0; i < response.length(); i++) {
+                JSONObject item = response.getJSONObject(i);
+
+                Date date = dateFormat.parse(item.getString("when"));
+
+                Timestamp duration = new Timestamp(item.getLong("duration"));
+
+                CompletedRoute newRoute = new CompletedRoute( item.getInt("id"), date, item.getString("distance"),  duration, item.getInt("user"));
+            }
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }
+
 
 
