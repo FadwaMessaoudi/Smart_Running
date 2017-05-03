@@ -12,15 +12,15 @@ import java.net.URL;
 import javax.net.ssl.HttpsURLConnection;
 
 /**
- * Created by Mathieu Virsolvy on 02/05/2017.
+ * Created by Mathieu Virsolvy on 03/05/2017.
  */
 
-public class RoutesAPI extends AsyncTask<String, Void, String> {
+public class CompletedRoutesAPI extends AsyncTask<String, Void, String> {
     @Override
     protected String doInBackground(String... params) {
         String token = params[0];
         try {
-            URL url = new URL("https://smart.domwillia.ms/routes/");
+            URL url = new URL("https://smart.domwillia.ms/complete_routes/me");
             HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
 
             connection.setRequestMethod("GET");
@@ -31,7 +31,7 @@ public class RoutesAPI extends AsyncTask<String, Void, String> {
                 if(connection.getResponseCode() == HttpURLConnection.HTTP_BAD_REQUEST){
                     return "auth error";
                 }
-               return "error";
+                return "error";
             }
 
             BufferedReader br = new BufferedReader(new InputStreamReader(
@@ -48,6 +48,5 @@ public class RoutesAPI extends AsyncTask<String, Void, String> {
         } catch (IOException e) {
             e.printStackTrace();
             return null;
-        }
-    }
+        }    }
 }

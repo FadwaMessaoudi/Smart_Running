@@ -26,7 +26,7 @@ public class SignInAPI extends AsyncTask<String, Void, String> {
         String email = params[1];
         String pwd = params[2];
 
-        String token = "vide";
+        String token = "";
         try {
 
             URL url = new URL("https://smart.domwillia.ms/auth/login/");
@@ -40,11 +40,6 @@ public class SignInAPI extends AsyncTask<String, Void, String> {
             connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
             connection.setRequestProperty("Accept", "application/json");
 
-
-            /**JSONObject input = new JSONObject();
-             input.put("username", name);
-             input.put("email", email);
-             input.put("password", pwd);*/
             String input = "{\"username\": \""+ name +"\",\"email\": \""+ email + "\",\"password\": \""+pwd+"\"}";
 
 
@@ -68,7 +63,6 @@ public class SignInAPI extends AsyncTask<String, Void, String> {
             String output = br.readLine();
             JSONObject response = new JSONObject(output);
             token = response.getString("key");
-            //token=output;
 
             connection.disconnect();
 
