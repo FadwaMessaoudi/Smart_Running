@@ -21,7 +21,7 @@ public class RunActivity extends AppCompatActivity {
 //=========Route DATAS==========================================
         String id=(String)extras.get("description");
         String title=(String)extras.get("title");
-        Route.Mode mode=(Route.Mode)extras.get("title");
+        Route.Mode mode=(Route.Mode)extras.get("mode");
         int difficulty=(int)extras.get("difficulty");
 
         ArrayList<Marker> markers = (ArrayList<Marker>)extras.get("markers");
