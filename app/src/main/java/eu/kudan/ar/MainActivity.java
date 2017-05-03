@@ -27,6 +27,7 @@ import eu.kudan.ar.fragment.CoursesFragment;
 import eu.kudan.ar.fragment.AmisFragment;
 import eu.kudan.ar.fragment.HistoriqueFragment;
 import eu.kudan.ar.fragment.ProfilFragment;
+import eu.kudan.ar.fragment.RunsActivity;
 import eu.kudan.ar.fragment.SettingsFragment;
 import eu.kudan.ar.other.CircleTransform;
 
@@ -55,6 +56,9 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG_HISTORIQUE = "historique";
     private static final String TAG_SETTINGS = "parametres";
     public static String CURRENT_TAG = TAG_COURSES;
+
+    // activities identifiers
+    public static enum ACTIVITIES {RUNS}
 
     // toolbar titles respected to selected nav menu item
     private String[] activityTitles;
@@ -184,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
             case 0:
                 // courses
                 CoursesFragment coursesFragment = new CoursesFragment();
-                return coursesFragment;
+                return  coursesFragment;
             case 1:
                 // profil
                 ProfilFragment profilFragment = new ProfilFragment();
@@ -309,6 +313,18 @@ public class MainActivity extends AppCompatActivity {
         }
 
         super.onBackPressed();
+    }
+
+    public void CallActivity (ACTIVITIES act){
+        switch (act){
+            case RUNS:
+            {
+                Intent intent = new Intent(getApplicationContext(), RunsActivity.class);
+                startActivity(intent);
+
+                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+            }
+        }
     }
 
 
