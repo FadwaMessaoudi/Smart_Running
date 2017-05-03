@@ -5,11 +5,13 @@ import android.graphics.Bitmap;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.io.Serializable;
+
 /**
  * Created by Mathieu Virsolvy on 19/04/2017.
  */
 
-public class Marker {
+public class Marker implements Serializable{
     private String id, title, description, fullDescription, clue;
     private LatLng  location;
     private float zoneRadius;
