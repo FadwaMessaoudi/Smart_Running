@@ -50,7 +50,7 @@ public class SigninSignup extends AppCompatActivity {
                     Toast.makeText(SigninSignup.this, "bad auth", Toast.LENGTH_LONG)
                             .show();
                 }
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                Intent intent = new Intent(getApplicationContext(),MainActivity.class);
                 startActivity(intent);
                 finish();
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);

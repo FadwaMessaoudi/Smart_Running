@@ -1,4 +1,5 @@
-package eu.kudan.ar.fragment;
+package eu.kudan.ar;
+
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -16,11 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.TextView;
-
-import eu.kudan.ar.R;
-import eu.kudan.ar.tab1_activity;
-import eu.kudan.ar.tab2_activity;
-import eu.kudan.ar.tab3_activity;
 
 public class RunsActivity extends AppCompatActivity {
 
@@ -52,8 +48,6 @@ public class RunsActivity extends AppCompatActivity {
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
-
-
 
 
     }
