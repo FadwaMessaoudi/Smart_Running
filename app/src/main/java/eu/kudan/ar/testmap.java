@@ -3,6 +3,8 @@ package eu.kudan.ar;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 
@@ -27,7 +29,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -46,6 +51,7 @@ public class testmap extends FragmentActivity implements OnMapReadyCallback {
     ArrayList<LatLng> centers = new ArrayList<LatLng>();
     String nearestTarget = "";
     Double nearestDist = 6371000.0; // initialize as radius of the Earth
+    final int criticalDist = 300;
 
     //    static int meCounter;
     final static int FIND_BALISE_REQUEST = 2;
@@ -104,13 +110,19 @@ public class testmap extends FragmentActivity implements OnMapReadyCallback {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), FindBalise.class);
-
-                ApplicationInfo appInfo = getApplicationInfo();
-                int resId = getResources().getIdentifier("balise_xing.jpg", "drawable", appInfo.packageName);
-                intent.putExtra("picture", BitmapFactory.decodeResource(getResources(),resId));
-
+                intent.putExtra("picture", checkout());
                 startActivityForResult(intent, FIND_BALISE_REQUEST);
                 overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+            }
+        });
+
+        final FloatingActionButton vbtn = (FloatingActionButton) findViewById(R.id.validatebtn);
+        vbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                int index = nearestTarget.charAt(6);
+//                markers.get(index).
+                vbtn.setVisibility(View.INVISIBLE);
             }
         });
     }
@@ -138,13 +150,6 @@ public class testmap extends FragmentActivity implements OnMapReadyCallback {
         mMap.addMarker(new MarkerOptions().position(lyon).title("La Doua")).showInfoWindow();
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lyon,15));
 
-        CircleOptions circleOptions3 = new CircleOptions()
-                .center(lyon)
-                .radius(50) // In meters
-                .fillColor(startColor)
-                .strokeColor(startStrokeColor);
-        Circle circle3= mMap.addCircle(circleOptions3);
-
         CircleOptions co = new CircleOptions()
                 .center(lyon)
                 .radius(50) // In meters
@@ -161,29 +166,8 @@ public class testmap extends FragmentActivity implements OnMapReadyCallback {
             Circle c = mMap.addCircle(co);
             mMap.addMarker(new MarkerOptions().position(location).
                     title("Target" + i).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))).showInfoWindow();
+
         }
-
-        // Instantiates a new CircleOptions object and defines the center and radius
-        CircleOptions circleOptions = new CircleOptions()
-                .center(new LatLng(45.784031, 4.880026))
-                .radius(50) // In meters
-                .fillColor(poiColor)
-                .strokeColor(poiStrokeColor);
-        // Get back the mutable Circle
-        Circle circle = mMap.addCircle(circleOptions);
-
-        mMap.addMarker(new MarkerOptions().position(new LatLng(45.784031, 4.880026)).title("Matthew").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW))).showInfoWindow();
-
-        CircleOptions circleOptions2 = new CircleOptions()
-                .center(new LatLng(45.784730, 4.872096))
-                .radius(50) // In meters
-                .fillColor(poiColor)
-                .strokeColor(poiStrokeColor);
-
-        mMap.addMarker(new MarkerOptions().position(new LatLng(45.784730, 4.872096)).title("soDomy").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW))).showInfoWindow();
-
-        Circle circle2 = mMap.addCircle(circleOptions2);
-        circle2.setFillColor(startColor);
     }
 
     public void refreshMap (GoogleMap myGoogleMap, double latitude, double longitude) {
@@ -232,7 +216,7 @@ public class testmap extends FragmentActivity implements OnMapReadyCallback {
 
             if (nearestTarget != "") {
                 String info2 = "Your nearest target is" + nearestTarget +
-                        "\n The distance is " + nearestDist + "m";
+                        "\n The distance is " + nearestDist.intValue() + "m";
                 Toast.makeText(testmap.this, info2, Toast.LENGTH_LONG).show();
             }
             getnearest(lat, lon);
@@ -248,14 +232,128 @@ public class testmap extends FragmentActivity implements OnMapReadyCallback {
                 nearestDist = getDistance(currentPosition, centers.get(i));
                 nearestTarget = "Target" + i;
             }
-//            if (nearestDist < criticalDist) {}
+            if (nearestDist < criticalDist) {
+                findViewById(R.id.validatebtn).setVisibility(View.VISIBLE);
+            }
         }
     }
 
-    public static boolean validateCheckPoints (LatLng latlng, Circle c) {
-        double r = c.getRadius();
-        double distance = getDistance(latlng, c.getCenter());
-        return (r > distance);
+    public File checkout() {
+        //configure inJustDecodeBoudns=true to acquire the size of resource image
+        final BitmapFactory.Options opt = new BitmapFactory.Options();
+        opt.inJustDecodeBounds = true;
+
+        File file;
+        switch (nearestTarget) {
+            case "Target0" :
+                Bitmap bm0 = BitmapFactory.decodeResource(getResources(), R.drawable.balise_1, opt);
+
+                file = new File("/File/balise_0.jpg");
+                try {
+                    BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
+                    bm0.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+                    bos.flush();
+                    bos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "Target1" :
+                Bitmap bm1 = BitmapFactory.decodeResource(getResources(), R.drawable.balise_1, opt);
+
+                file = new File("/File/balise_1.jpg");
+                try {
+                    BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
+                    bm1.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+                    bos.flush();
+                    bos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "Target2" :
+                Bitmap bm2 = BitmapFactory.decodeResource(getResources(), R.drawable.balise_1, opt);
+
+                file = new File("/File/balise_2.jpg");
+                try {
+                    BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
+                    bm2.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+                    bos.flush();
+                    bos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "Target3" :
+                Bitmap bm3 = BitmapFactory.decodeResource(getResources(), R.drawable.balise_1, opt);
+
+                file = new File("/File/balise_3.jpg");
+                try {
+                    BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
+                    bm3.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+                    bos.flush();
+                    bos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "Target4" :
+                Bitmap bm4 = BitmapFactory.decodeResource(getResources(), R.drawable.balise_1, opt);
+
+                file = new File("/File/balise_4.jpg");
+                try {
+                    BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
+                    bm4.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+                    bos.flush();
+                    bos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "Target5" :
+                Bitmap bm5 = BitmapFactory.decodeResource(getResources(), R.drawable.balise_1, opt);
+
+                file = new File("/File/balise_5.jpg");
+                try {
+                    BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
+                    bm5.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+                    bos.flush();
+                    bos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "Target6" :
+                Bitmap bm6 = BitmapFactory.decodeResource(getResources(), R.drawable.balise_1, opt);
+
+                file = new File("/File/balise_6.jpg");
+                try {
+                    BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
+                    bm6.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+                    bos.flush();
+                    bos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "Target7" :
+                Bitmap bm7 = BitmapFactory.decodeResource(getResources(), R.drawable.balise_1, opt);
+
+                file = new File("/File/balise_7.jpg");
+                try {
+                    BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
+                    bm7.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+                    bos.flush();
+                    bos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            default :
+                return null;
+        }
+
+        return file;
     }
 
     public static double getDistance(LatLng first, LatLng second) {

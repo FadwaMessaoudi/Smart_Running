@@ -26,4 +26,18 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true" />
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/validatebtn"
+        android:visibility="invisible"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_gravity="top|left"
+        android:layout_marginRight="8dp"
+        android:clickable="true"
+        app:srcCompat="@mipmap/logo2"
+        map:layout_anchor="@+id/map"
+        map:layout_anchorGravity="bottom|right" />
+
 </android.support.design.widget.CoordinatorLayout>

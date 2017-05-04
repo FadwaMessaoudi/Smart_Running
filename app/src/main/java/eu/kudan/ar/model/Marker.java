@@ -112,11 +112,6 @@ public class Marker implements Serializable{
         }
         markerInfo += "getLocation : " + this.getLatitude() + "," + this.getLongitude() + "\n";
 
-        if (this.getTargetImage() == null) {
-            markerInfo += "no luck \n";
-        } else {
-            markerInfo += "yeah! \n";
-        }
 //        markerInfo += "getRadius : " + this.getZoneRadius() + "\n";
 //        markerInfo += "getClue : " + this.getClue() + "\n";
         markerInfo += "**************************** \n";
