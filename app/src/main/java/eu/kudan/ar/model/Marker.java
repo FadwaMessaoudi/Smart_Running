@@ -18,12 +18,13 @@ public class Marker implements Serializable{
     private double latitude = 0;
     private double longitude = 0;
     private float zoneRadius;
-    private Bitmap targetImage, targetTexture;
+//    private Bitmap targetImage, targetTexture;
     final private double stdLat = 45.783; // deviation < 1/1000
     final private double stdLon = 4.875; // deviation < 1/2000
 
 
-    public Marker(String id, String title, String description, String fullDescription, LatLng location, float zoneRadius, String clue, Bitmap targetImage, Bitmap targetTexture) {
+//    public Marker(String id, String title, String description, String fullDescription, LatLng location, float zoneRadius, String clue, Bitmap targetImage, Bitmap targetTexture) {
+public Marker(String id, String title, String description, String fullDescription, LatLng location, float zoneRadius, String clue) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -34,8 +35,8 @@ public class Marker implements Serializable{
         this.zoneRadius = zoneRadius;
 
         this.clue = clue;
-        this.targetImage=targetImage;
-        this.targetTexture=targetTexture;
+//        this.targetImage=targetImage;
+//        this.targetTexture=targetTexture;
 
     }
 
@@ -43,13 +44,13 @@ public class Marker implements Serializable{
         return clue;
     }
 
-    public Bitmap getTargetImage() {
-        return targetImage;
-    }
+//    public Bitmap getTargetImage() {
+//        return targetImage;
+//    }
 
-    public Bitmap getTargetTexture() {
-        return targetTexture;
-    }
+//    public Bitmap getTargetTexture() {
+//        return targetTexture;
+//    }
 
     public String getId() {
         return id;
@@ -86,7 +87,7 @@ public class Marker implements Serializable{
         this.id = id;
     }
 
-    public void initiate(String title, String description, String fullDescription, String lat, String lon, String zoneRadius, String clue, Bitmap targetImage, Bitmap targetTexture){
+    public void initiate(String title, String description, String fullDescription, String lat, String lon, String zoneRadius, String clue){
         this.title = title;
         this.description = description;
         this.fullDescription = fullDescription;
@@ -96,16 +97,16 @@ public class Marker implements Serializable{
         this.zoneRadius = Float.parseFloat(zoneRadius);
 
         this.clue = clue;
-        this.targetImage=targetImage;
-        this.targetTexture=targetTexture;
+//        this.targetImage=targetImage;
+//        this.targetTexture=targetTexture;
     }
 
     public String toString() {
         String markerInfo = "";
-//        markerInfo += "getId : " + this.getId() + "\n";
-//        markerInfo += "getTitle : " + this.getTitle() + "\n";
-//        markerInfo += "getDescription : " + this.getDescription() + "\n";
-//        markerInfo += "getFullDescription : " + this.getFullDescription() + "\n";
+        markerInfo += "getId : " + this.getId() + "\n";
+        markerInfo += "getTitle : " + this.getTitle() + "\n";
+        markerInfo += "getDescription : " + this.getDescription() + "\n";
+        markerInfo += "getFullDescription : " + this.getFullDescription() + "\n";
 
         if (this.getLatitude() == 0 || this.getLongitude() == 0) {
             this.setLocation(generateLocation());

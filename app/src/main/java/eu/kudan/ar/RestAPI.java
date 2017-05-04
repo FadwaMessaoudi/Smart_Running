@@ -159,7 +159,6 @@ public class RestAPI {
 
     public Marker getMarker(Marker marker) {
 
-
         MarkersAPI markersApi = new MarkersAPI();
         markersApi.execute(token, marker.getId());
         try {
@@ -173,11 +172,11 @@ public class RestAPI {
             imageDownload.execute(item.getString("target_image"));
             Bitmap targetImage = imageDownload.get();
 
-            imageDownload.execute(item.getString("target_texture"));
-            Bitmap targetTexture = imageDownload.get();
+            //imageDownload.execute(item.getString("target_texture"));
+           // Bitmap targetTexture = imageDownload.get();
 
-            marker.initiate(item.getString("title"), item.getString("description"), item.getString("full_description"), item.getString("latitude"), item.getString("longitude"),item.getString("zone_radius"), item.getString("clue"), targetImage , targetTexture);
-
+//            marker.initiate(item.getString("title"), item.getString("description"), item.getString("full_description"), item.getString("latitude"), item.getString("longitude"),item.getString("zone_radius"), item.getString("clue"), targetImage );
+            marker.initiate(item.getString("title"), item.getString("description"), item.getString("full_description"), item.getString("latitude"), item.getString("longitude"),item.getString("zone_radius"), item.getString("clue"));
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {

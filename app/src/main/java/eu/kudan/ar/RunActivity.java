@@ -33,10 +33,12 @@ public class RunActivity extends AppCompatActivity {
         String title=(String)extras.get("title");
         Route.Mode mode=(Route.Mode)extras.get("mode");
         int difficulty=(int)extras.get("difficulty");
+        RestAPI rapi = RestAPI.getINSTANCE();
 
         final ArrayList<Marker> markers = (ArrayList<Marker>)extras.getSerializable("markers");
 
         for (int i = 0; i < markers.size(); i++) {
+            rapi.getMarker(markers.get(i));
             String mInfo = markers.get(i).toString();
             newChallangeChosen.append(mInfo);
         }

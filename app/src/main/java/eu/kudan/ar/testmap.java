@@ -159,13 +159,14 @@ public class testmap extends FragmentActivity implements OnMapReadyCallback {
         for (int i = 0; i < markers.size(); i++) {
             double lat = markers.get(i).getLatitude();
             double lon = markers.get(i).getLongitude();
+            String title = markers.get(i).getTitle();
             LatLng location = new LatLng(lat, lon);
             co.center(location);
             centers.add(location);
 
             Circle c = mMap.addCircle(co);
             mMap.addMarker(new MarkerOptions().position(location).
-                    title("Target" + i).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))).showInfoWindow();
+                    title(title).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))).showInfoWindow();
 
         }
     }
@@ -230,7 +231,7 @@ public class testmap extends FragmentActivity implements OnMapReadyCallback {
         for (int i = 0; i < centers.size(); i++) {
             if (nearestDist > getDistance(currentPosition, centers.get(i))){
                 nearestDist = getDistance(currentPosition, centers.get(i));
-                nearestTarget = "Target" + i;
+                nearestTarget = markers.get(i).getTitle();
             }
             if (nearestDist < criticalDist) {
                 findViewById(R.id.validatebtn).setVisibility(View.VISIBLE);
