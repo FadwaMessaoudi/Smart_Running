@@ -43,7 +43,7 @@ public class testmap extends FragmentActivity implements OnMapReadyCallback {
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     ArrayList<eu.kudan.ar.model.Marker> markers;
-    List<LatLng> centers;
+    ArrayList<LatLng> centers = new ArrayList<LatLng>();
     String nearestTarget = "";
     Double nearestDist = 6371000.0; // initialize as radius of the Earth
 
@@ -156,12 +156,11 @@ public class testmap extends FragmentActivity implements OnMapReadyCallback {
             double lon = markers.get(i).getLongitude();
             LatLng location = new LatLng(lat, lon);
             co.center(location);
+            centers.add(location);
 
             Circle c = mMap.addCircle(co);
             mMap.addMarker(new MarkerOptions().position(location).
                     title("Target" + i).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))).showInfoWindow();
-
-            centers.add(location);
         }
 
         // Instantiates a new CircleOptions object and defines the center and radius
@@ -200,10 +199,6 @@ public class testmap extends FragmentActivity implements OnMapReadyCallback {
                 .strokeColor(poiStrokeColor);
         // Get back the mutable Circle
         Circle circle = myGoogleMap.addCircle(circleOptions);
-
-        for (int i = 0; i < centers.size(); i++) {
-
-        }
 //        myGoogleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title("Me" + meCounter).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW))).showInfoWindow();
 //        meCounter += 1;
     }
@@ -234,11 +229,28 @@ public class testmap extends FragmentActivity implements OnMapReadyCallback {
                     + ", \n longitude : " + location.getLongitude() + ", \n latitude : "
                     + location.getLatitude();
             Toast.makeText(testmap.this, info, Toast.LENGTH_LONG).show();
-//            currentLat = lat;
-//            currentLon = lon;
+
+            if (nearestTarget != "") {
+                String info2 = "Your nearest target is" + nearestTarget +
+                        "\n The distance is " + nearestDist + "m";
+                Toast.makeText(testmap.this, info2, Toast.LENGTH_LONG).show();
+            }
+            getnearest(lat, lon);
             refreshMap(mMap, lat, lon);
         }
     };
+
+    public void getnearest(double lat, double lon) {
+        LatLng currentPosition = new LatLng(lat, lon);
+
+        for (int i = 0; i < centers.size(); i++) {
+            if (nearestDist > getDistance(currentPosition, centers.get(i))){
+                nearestDist = getDistance(currentPosition, centers.get(i));
+                nearestTarget = "Target" + i;
+            }
+//            if (nearestDist < criticalDist) {}
+        }
+    }
 
     public static boolean validateCheckPoints (LatLng latlng, Circle c) {
         double r = c.getRadius();
